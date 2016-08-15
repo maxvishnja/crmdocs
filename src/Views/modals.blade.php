@@ -77,14 +77,16 @@
     <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="text-left p-b-5"><span class="semi-bold">Set</span> <span class="file-info">permissions</span> <span class="folder-info">this folder</span></h5>
+                <h5 class="text-left p-b-5"><span class="semi-bold">Set</span> <span class="file-info">permissions folder</span> <span class="folder-perm"> </span></h5>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <input type="hidden" id="type-rename">
                     <input type="hidden" id="path">
                     <div class="col-md-9">
-                        <h4 class="permopen">Add more</h4>
+                        <h4 class="padding">Owner</h4>
+                        <div class="set-perm"></div>
+                        <h4 class="permopen padding">Add more</h4>
                         <div class="permis" id="data-rename">
                         </div>
                     </div>

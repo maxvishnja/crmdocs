@@ -102,20 +102,24 @@ class FileManagerController extends BaseController {
         return $data;
     }
 
-    public function addFile(Request $request){
-
+    public function addFile(Request $request, $group_id){
         $data = $request->all();
         $files=Files::where('name', '=', $data['name'])->get()->toArray();
         if(empty($files)){
-            Files::create($data)->group()->attach("2");
-        }
-        else
-        {
-            Files::where('name', '=', $data['name']);
-
+            Files::create($data)->group()->attach($group_id);
+        } else {
+            Files::where('name', '=', $data['name'])->update($data);
+            Files::where('name', '=', $data['name'])->firstOrFail()->group()->attach($group_id);
         }
 
         return "success";
+    }
+
+    public function delGroups($name, $id)
+    {
+        Files::where('name', '=', $name)->firstOrFail()->group()->detach($id);
+
+        return 'success';
     }
 
     /**

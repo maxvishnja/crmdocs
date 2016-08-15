@@ -10,7 +10,8 @@ Route::group(['prefix' => config('filemanager.defaultRoute', 'admin/filemanager'
 	Route::post('/uploadFile', 'Infinety\FileManager\Controllers\FileManagerController@uploadFile');
 	Route::post('/createFolder', 'Infinety\FileManager\Controllers\FileManagerController@createFolder');
 	Route::post('/delete', 'Infinety\FileManager\Controllers\FileManagerController@delete');
-	Route::post('/addfile', 'Infinety\FileManager\Controllers\FileManagerController@addFile');
+	Route::post('/addfile/{id}', 'Infinety\FileManager\Controllers\FileManagerController@addFile');
+	Route::get('/delgroups/{slug}/{id}', 'Infinety\FileManager\Controllers\FileManagerController@delGroups');
 	Route::get('/download', 'Infinety\FileManager\Controllers\FileManagerController@download')->where('path', '.*');
 	Route::post('/preview', 'Infinety\FileManager\Controllers\FileManagerController@preview')->where('file', '.*');
 	Route::post('/move', 'Infinety\FileManager\Controllers\FileManagerController@move');
