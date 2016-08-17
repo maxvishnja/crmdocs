@@ -10,6 +10,8 @@ use Infinety\FileManager\Facades\FileFunctionsFacade;
 use Infinety\FileManager\Models\Files;
 use DirectoryIterator;
 use File;
+use Sentinel\Repositories\Group\SentinelGroupRepositoryInterface;
+use Sentinel\Repositories\User\SentinelUserRepositoryInterface;
 
 class FileManagerController extends BaseController {
 
@@ -27,12 +29,15 @@ class FileManagerController extends BaseController {
 
     protected $exceptExtensions;
 
-    public function __construct(){
+    public function __construct(SentinelUserRepositoryInterface $userRepository,
+                                SentinelGroupRepositoryInterface $groupRepository){
         $this->homePath = config('filemanager.homePath');
         $this->exceptFiles = collect(config('filemanager.exceptFiles'));
         $this->exceptFolders = collect(config('filemanager.exceptFolders'));
         $this->exceptExtensions = collect(config('filemanager.exceptExtensions'));
         $this->globalFilter = null;
+        $this->userRepository  = $userRepository;
+        $this->groupRepository = $groupRepository;
     }
 
     /**
@@ -294,6 +299,9 @@ class FileManagerController extends BaseController {
         foreach ($dir_iterator as $file) {
             if (!$file->isDot() && !$this->exceptExtensions->contains($file->getExtension()) && !$this->exceptFolders->contains($file->getBasename()) && !$this->exceptFiles->contains($file->getBasename())  && $this->accept($file)) {
 
+
+
+
                 if($file->isReadable()){
                     $fileInfo = [
                         'name'  =>  trim($file->getBasename()),
@@ -315,13 +323,28 @@ class FileManagerController extends BaseController {
                     if($file->getType() == 'dir'){
 
                         if($file->isReadable()){
+                            $groups=Files::where('name', '=', $fileInfo['name'])->firstOrFail()->group()->get()->toArray();
+                            foreach($groups as $key=>$value){
+                                $group[$key]=$value['id'];
+                            }
+                            $users = $this->userRepository->getUser()->groups()->get()->toArray();
+                            foreach($users as $key=>$value){
+                                $user[$key]=$value['id'];
+                            }
+                            $key = array_intersect($group, $user);
+                            if(!empty($key)){
+                                $active="active";
+                            }else{
+                                $active="noactive";
+                            }
                             $dataFolder = $this->readFolder($file->getPathname(), true);
                             $fileInfo["size"] = ($dataFolder->fileSum != 0) ? $this->formatBytes($dataFolder->fileSum, 1) : $fileInfo["size"];
                             $fileInfo["folder"] = (object)[
                                 'path'          => str_replace($this->homePath.DIRECTORY_SEPARATOR, '', $file->getPathName()),
                                 'fileCount'     => $dataFolder->fileCount,
                                 'folderCount'   => $dataFolder->folderCount,
-                                'permission'    => true
+                                'permission'    => true,
+                                'display'       => $active
                             ];
                         } else {
                             $fileInfo["folder"] = (object)[

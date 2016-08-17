@@ -12,7 +12,7 @@
             <div class="item grid col-sm-3" id="item-{{ $index }}">
             @if($file->type == 'dir')
 
-                <div class="filemanager-item folder"  data-folder="{{ $file->folder->path }}" data-name="{{ $file->name }}">
+                <div class="filemanager-item folder {{$file->folder->display}}"  data-folder="{{ $file->folder->path }}" data-name="{{ $file->name }}">
                     <div class="row full-width centered">
                         <div class="col-sm-4 b-r b-grey icon">
                             <i class="fa fa-folder"></i>
